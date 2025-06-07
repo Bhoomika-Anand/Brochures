@@ -1,0 +1,225 @@
+-------------------------------------------------------------------------------------
+
+modify build.gradle
+
+-------------------------------------------------------------------------------------
+
+plugins {
+    id 'application'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
+}
+
+application {
+    mainClass = 'com.example.Main'
+}
+
+-------------------------------------------------------------------------------------
+
+src-main-java-org.example-Main.java
+
+-------------------------------------------------------------------------------------
+
+package com.example;
+
+public class Main {
+    public static void main(String[] args) {
+        System.out.println("Hello from Gradle!");
+    }
+}
+
+-------------------------------------------------------------------------------------
+
+Terminal
+
+$ run
+
+-------------------------------------------------------------------------------------
+
+create /docs in main directory
+index.html, style.css, logo.png
+
+-------------------------------------------------------------------------------------
+
+index.html
+
+-------------------------------------------------------------------------------------
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Simple Website</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <img src="logo.png" alt="Logo">
+  </header>
+  <h1>Welcome to My Simple Website</h1>
+</body>
+</html>
+
+-------------------------------------------------------------------------------------
+
+style.css
+
+-------------------------------------------------------------------------------------
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  text-align: center;
+}
+
+header img {
+  width: 100px;
+}
+
+-------------------------------------------------------------------------------------
+
+GitHub
+
+Create new repo
+copy <url>
+
+-------------------------------------------------------------------------------------
+
+Terminal
+
+$ git init
+$ git add .
+$ git commit -m "Added the docs folder"
+$ git remote add origin <url>
+$ git push -u origin master
+
+-------------------------------------------------------------------------------------
+
+GitHub-repo-settings-pages-select master & docs-save
+
+settings-pages-visit site
+
+-------------------------------------------------------------------------------------
+
+Add Selenium & TestNG dependencies in build.gradle
+
+-------------------------------------------------------------------------------------
+
+dependencies {
+    testImplementation 'org.seleniumhq.selenium:selenium-java:4.28.1'  // Selenium WebDriver
+    testImplementation 'org.testng:testng:7.4.0'                        // TestNG testing framework
+}
+
+test {
+    useTestNG()
+}
+
+-------------------------------------------------------------------------------------
+
+src-test-java-org.test-WebpageTest.java
+
+-------------------------------------------------------------------------------------
+
+package org.test;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.Assert;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+
+public class WebpageTest {
+    private static WebDriver driver;
+
+    @BeforeTest
+    public void openBrowser() throws InterruptedException {
+        // Make sure to set system property for chromedriver if required, example below:
+        // System.setProperty("webdriver.chrome.driver", "/path/to/chromedriver");
+
+        driver = new ChromeDriver();
+        driver.manage().window().maximize();
+        Thread.sleep(2000);
+        driver.get("https://bhoomika-anand.github.io/3/");
+    }
+
+    @Test
+    public void titleValidationTest() {
+        String actualTitle = driver.getTitle();
+        String expectedTitle = "My Simple Website";
+
+        Assert.assertEquals(actualTitle, expectedTitle, "Title does not match expected value.");
+    }
+
+    @AfterTest
+    public void closeBrowser() throws InterruptedException {
+        Thread.sleep(1000);
+        driver.quit();
+    }
+}
+
+-------------------------------------------------------------------------------------
+
+gradle-task-verification-test----webpage opens
+
+-------------------------------------------------------------------------------------
+
+build.gradle jar package added
+
+-------------------------------------------------------------------------------------
+
+plugins {
+    id 'application'
+    id 'java'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.seleniumhq.selenium:selenium-java:4.28.1'  // Selenium WebDriver
+    testImplementation 'org.testng:testng:7.4.0'                        // TestNG testing framework
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
+}
+
+test {
+    useTestNG()
+}
+
+application {
+    mainClass = 'com.example.Main'
+}
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'org.example.Main'  // Specifies the entry point of the application
+        )
+    }
+}
+
+-------------------------------------------------------------------------------------
+
+Terminal
+
+$ gradle jar
+
+-------------------------------------------------------------------------------------
+
+build-libs-jar file created
+
+-------------------------------------------------------------------------------------
+
+Terminal
+
+$ java -jar ./build/libs/3.jar
+
+-------------------------------------------------------------------------------------
