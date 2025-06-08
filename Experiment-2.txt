@@ -1,0 +1,340 @@
+-------------------------------------------------------------------------------------
+
+create new project-maven
+
+-------------------------------------------------------------------------------------
+
+pom.xml------modify -----add Selenium and TestNG dependencies
+
+-------------------------------------------------------------------------------------
+
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.example</groupId>
+    <artifactId>2</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <!-- https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java -->
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>4.33.0</version>
+        </dependency>
+        <!-- TestNG Framework for Testing -->
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <versionx>7.7.0</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+</project>
+
+-------------------------------------------------------------------------------------
+
+src--main--resources----add---index.html, style.css & logo.png
+
+-------------------------------------------------------------------------------------
+
+index.html
+
+-------------------------------------------------------------------------------------
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Simple Website</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+    <img src="logo.png" alt="Logo">
+</header>
+<h1>Welcome to My Simple Website</h1>
+</body>
+</html>
+
+-------------------------------------------------------------------------------------
+
+style.css
+
+-------------------------------------------------------------------------------------
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  text-align: center;
+}
+
+header img {
+  width: 100px;
+}
+
+-------------------------------------------------------------------------------------
+
+Github----new repo--copy url
+
+-------------------------------------------------------------------------------------
+
+Terminal
+
+$ git init
+$ git add .
+$ git commit -m "Initial commit"
+$ git remote add origin <url>
+$ git push -u origin master
+
+-------------------------------------------------------------------------------------
+
+pom.xml ---- modify
+
+-------------------------------------------------------------------------------------
+
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.example</groupId>
+    <artifactId>2</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <!-- Selenium WebDriver for Java -->
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>4.33.0</version>
+        </dependency>
+
+        <!-- TestNG Framework for Testing -->
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>7.7.0</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <phase>prepare-package</phase> <!-- Before packaging -->
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.basedir}/docs</outputDirectory> <!-- Deploy to /docs folder -->
+                            <resources>
+                                <resource>
+                                    <directory>src/main/resources</directory>
+                                    <includes>
+                                        <include>**/*</include> <!-- Copy all files in src/main/resources -->
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
+
+
+-------------------------------------------------------------------------------------
+
+Terminal
+
+$ mvn clean install
+$ git status
+$ git add .
+$ git remote show origin
+$ git commit -m "Deploy site to GitHub"
+$ git push origin master
+
+-------------------------------------------------------------------------------------
+
+GitHub--repo--settings--pages--master--docs--save
+visit live site
+
+-------------------------------------------------------------------------------------
+
+src--test--java---WebpageTest.java---add code--change driver url to site <url>
+
+-------------------------------------------------------------------------------------
+
+package org.test;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.Assert;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+
+public class WebpageTest {
+    private static WebDriver driver;
+
+    @BeforeTest
+    public void openBrowser() throws InterruptedException {
+        driver = new ChromeDriver();
+        driver.manage().window().maximize();
+        Thread.sleep(2000);
+        driver.get("https://bhoomika-anand.github.io/2/"); // Replace with your actual file path or localhost/server URL
+    }
+
+    @Test
+    public void titleValidationTest() {
+        String actualTitle = driver.getTitle();
+        String expectedTitle = "My Simple Website";
+        Assert.assertEquals(actualTitle, expectedTitle);
+    }
+
+    @Test
+    public void logoPresenceTest() {
+        WebElement logo = driver.findElement(By.tagName("img"));
+        Assert.assertTrue(logo.isDisplayed(), "Logo should be visible on the page");
+    }
+
+    @Test
+    public void headingValidationTest() {
+        WebElement heading = driver.findElement(By.tagName("h1"));
+        String expectedText = "Welcome to My Simple Website";
+        Assert.assertEquals(heading.getText(), expectedText);
+    }
+
+    @AfterTest
+    public void closeBrowser() throws InterruptedException {
+        Thread.sleep(1000);
+        driver.quit();
+    }
+}
+
+
+-------------------------------------------------------------------------------------
+
+run test--web page opens & closes
+
+-------------------------------------------------------------------------------------
+
+modify pom.xml
+
+-------------------------------------------------------------------------------------
+
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.example</groupId>
+    <artifactId>2</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <!-- Selenium WebDriver for Java -->
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>4.33.0</version>
+        </dependency>
+
+        <!-- TestNG Framework for Testing -->
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>7.7.0</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <phase>prepare-package</phase> <!-- Before packaging -->
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.basedir}/docs</outputDirectory> <!-- Deploy to /docs folder -->
+                            <resources>
+                                <resource>
+                                    <directory>src/main/resources</directory>
+                                    <includes>
+                                        <include>**/*</include> <!-- Copy all files in src/main/resources -->
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+                    <!-- Maven JAR Plugin -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <version>3.2.0</version>
+                        <configuration>
+                            <archive>
+                                <manifest>
+                                    <mainClass>com.example.Main</mainClass> <!-- Replace with your actual main class -->
+                                </manifest>
+                            </archive>
+                        </configuration>
+                    </plugin>
+
+        </plugins>
+    </build>
+
+</project>
+
+-------------------------------------------------------------------------------------
+
+Terminal
+
+$ mvn clean package
+$ java -jar .\target\2-1.0-SNAPSHOT.jar
+
+-------------------------------------------------------------------------------------
